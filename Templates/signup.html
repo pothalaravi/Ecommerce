@@ -1,0 +1,114 @@
+{% extends "theme.html" %}
+{% block main %}
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg rounded-3">
+        <div class="card-header text-center bg-primary text-white">
+          <h3 class="mb-0">Create Your Account</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Error Message -->
+          {% if error %}
+            <div class="alert alert-warning alert-dismissible fade show">
+              <strong>{{ error }}</strong>
+              <button type="button" class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          <!-- Success Message -->
+          {% if success %}
+            <div class="alert alert-warning alert-dismissible fade show">
+              <strong>{{ success }}</strong>
+              <button type="button" class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          <!-- Signup Form -->
+          <form method="POST" action="{% url 'signup' %}">
+            {% csrf_token %}
+
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label for="full_name" class="form-label">Full Name</label>
+              <input
+                type="text"
+                name="full_name"
+                id="full_name"
+                class="form-control"
+                value="{{values.full_name}}"
+                placeholder="Enter first name"
+                required
+              />
+            </div>
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                class="form-control"
+                value="{{values.email}}"
+                placeholder="Enter email address"
+                required
+              />
+            </div>
+
+            <!-- Mobile -->
+            <div class="mb-3">
+              <label for="mobile" class="form-label">Mobile Number</label>
+              <input
+                type="tel"
+                name="mobile"
+                id="mobile"
+                class="form-control"
+                value="{{values.mobile}}"
+                placeholder="Enter mobile number"
+                pattern="[0-9]{10}"
+                maxlength="10"
+                required
+              />
+              <div class="form-text">Enter 10-digit mobile number</div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                class="form-control"
+                placeholder="Enter password"
+                minlength="6"
+                required
+              />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                Sign Up
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card-footer text-center">
+          <small>
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

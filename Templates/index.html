@@ -1,0 +1,70 @@
+
+{% extends "theme.html" %}
+{% block main %}
+<div class="container my-4">
+    <div class="row">
+        <!-- categories list coloumns
+        <div class="col-lg-3">
+            <div class="list-group">
+                <a href="#" 
+                class="m-2">
+                <button class="btn btn-outline-dark">All Products</button>
+                </a>
+                {% for j in categories %}
+
+                <a href="#" 
+                class="m-2">
+                <button class="btn btn-outline-dark">{{j.name}}</button>
+                </a>
+                {%endfor%}
+            </div>
+        </div> -->
+        <!-- Categories Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="list-group">
+                <!-- All Products button -->
+                <a href="/" 
+                class="list-group-item list-group-item-action active">
+                    All Products
+                </a>
+
+                {% for category in categories %}
+                <a href="/?category={{category.id}}" 
+                class="list-group-item list-group-item-action">
+                    {{ category.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <!--products coloumns-->
+        <div class="col-lg-9">
+            <div class="row g-4">
+                {% for i in products %}
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <!-- Product image -->
+                        <img src="{{ i.image.url }}" class="card-img-top img-fluid" alt="{{ i.name }}">
+
+                        <!-- Product info -->
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">{{ i.name }}</h5>
+                            <p class="card-text fw-semibold">Price: ₹{{ i.price }}</p>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="card-footer bg-transparent border-top-0">
+                            <button type="button" class="btn btn-success w-100">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
