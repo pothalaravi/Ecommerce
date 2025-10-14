@@ -45,6 +45,19 @@ class Customer(models.Model):
             return Customer.objects.get(email=email)
         except:
             return False
+        
+
+
+class Cart(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.customer.full_name} - {self.product.name}"
+    def total_price(self):
+        return self.product.price * self.quantity
+
 
 
 

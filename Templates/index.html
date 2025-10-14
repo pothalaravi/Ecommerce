@@ -1,70 +1,153 @@
-
 {% extends "theme.html" %}
 {% block main %}
+
+<style>
+  /* 🟢 Page Background */
+  body {
+    background-color: #f8f9fa;
+  }
+
+  /* 🟢 Sidebar */
+  .list-group-item {
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .list-group-item:hover {
+    background-color: #198754;
+    color: white;
+  }
+
+  .list-group-item.active {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+  }
+
+  /* 🟢 Product Cards */
+  .card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-img-top {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    height: 230px;
+    object-fit: cover;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .card-text {
+    font-size: 0.95rem;
+    color: #666;
+  }
+
+  /* 🟢 Add to Cart Button */
+  .btn-success {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .btn-success:hover {
+    background-color: #157347;
+    transform: scale(1.05);
+  }
+
+  /* 🟢 Top Search & Sort Bar */
+  .filter-bar {
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+  }
+
+  .filter-bar input {
+    border-radius: 8px;
+  }
+
+  .filter-bar select {
+    border-radius: 8px;
+  }
+</style>
+
 <div class="container my-4">
-    <div class="row">
-        <!-- categories list coloumns
-        <div class="col-lg-3">
-            <div class="list-group">
-                <a href="#" 
-                class="m-2">
-                <button class="btn btn-outline-dark">All Products</button>
-                </a>
-                {% for j in categories %}
-
-                <a href="#" 
-                class="m-2">
-                <button class="btn btn-outline-dark">{{j.name}}</button>
-                </a>
-                {%endfor%}
-            </div>
-        </div> -->
-        <!-- Categories Sidebar -->
-        <div class="col-lg-3 mb-4">
-            <div class="list-group">
-                <!-- All Products button -->
-                <a href="/" 
-                class="list-group-item list-group-item-action active">
-                    All Products
-                </a>
-
-                {% for category in categories %}
-                <a href="/?category={{category.id}}" 
-                class="list-group-item list-group-item-action">
-                    {{ category.name }}
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-
-
-        <!--products coloumns-->
-        <div class="col-lg-9">
-            <div class="row g-4">
-                {% for i in products %}
-                <div class="col-12 col-sm-6 col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <!-- Product image -->
-                        <img src="{{ i.image.url }}" class="card-img-top img-fluid" alt="{{ i.name }}">
-
-                        <!-- Product info -->
-                        <div class="card-body">
-                            <h5 class="card-title mb-2">{{ i.name }}</h5>
-                            <p class="card-text fw-semibold">Price: ₹{{ i.price }}</p>
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="card-footer bg-transparent border-top-0">
-                            <button type="button" class="btn btn-success w-100">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+  <div class="row">
+    <!-- 🟢 Sidebar -->
+    <div class="col-lg-3 mb-4">
+      <div class="list-group shadow-sm">
+        <a href="/" class="list-group-item list-group-item-action active">
+          All Products
+        </a>
+        {% for category in categories %}
+        <a href="/?category={{category.id}}" class="list-group-item list-group-item-action">
+          {{ category.name }}
+        </a>
+        {% endfor %}
+      </div>
     </div>
 
+    <!-- 🟢 Main Product Section -->
+    <div class="col-lg-9">
+      <!-- Filter Bar -->
+      <div class="filter-bar d-flex flex-wrap justify-content-between align-items-center">
+        <!-- Search -->
+        <form method="GET" action="/" class="d-flex align-items-center w-100 w-md-auto mb-2 mb-md-0">
+          <input
+            type="text"
+            name="search"
+            class="form-control me-2"
+            placeholder="Search products..."
+            value="{{ request.GET.search|default:'' }}"
+          />
+          <button type="submit" class="btn btn-outline-success">
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="row g-4">
+        {% for i in products %}
+        <div class="col-12 col-sm-6 col-md-4">
+          <div class="card h-100 shadow-sm">
+            <a href="{% url 'product_detail' i.id %}">
+              <img src="{{ i.image.url }}" class="card-img-top img-fluid" alt="{{ i.name }}">
+            </a>
+            <div class="card-body text-center">
+              <h5 class="card-title mb-2">{{ i.name }}</h5>
+              <p class="card-text fw-semibold">₹{{ i.price }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pb-3 text-center">
+              <a href="{% url 'add_to_cart' i.id %}" class="btn btn-success px-4">
+                <i class="fa fa-cart-plus me-2"></i> Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted mt-4">No products found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
 {% endblock %}

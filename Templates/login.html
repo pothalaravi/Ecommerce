@@ -1,48 +1,77 @@
-{% extends "theme.html" %}
-{% block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Now</title>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css'>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css'>
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">Login</h4>
-                </div>
-                <div class="card-body">
-                    {% if error %}
-                        <div class="alert alert-warning alert-dismissible fade show">
-                            <strong>{{ error }}</strong>
-                            <button type="button" class="btn-close"
-                            data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                        </div>
-                    {% endif %}
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Raleway, sans-serif; }
+    body { background: linear-gradient(90deg, #0d0d1a, #1a1a2e); }
+    .container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .screen { background: linear-gradient(90deg, #1a1a2e, #2c2c54); position: relative; height: 600px; width: 360px; box-shadow: 0px 0px 24px #00ff88; border-radius: 15px; }
+    .screen__content { z-index: 1; position: relative; height: 100%; }
+    .screen__background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; clip-path: inset(0 0 0 0); }
+    .screen__background__shape { transform: rotate(45deg); position: absolute; filter: blur(2px); }
+    .screen__background__shape1 { height: 520px; width: 520px; background: #00ff88; top: -50px; right: 120px; border-radius: 0 72px 0 0; opacity: 0.2; }
+    .screen__background__shape2 { height: 220px; width: 220px; background: #ff0088; top: -172px; right: 0; border-radius: 32px; opacity: 0.3; }
+    .screen__background__shape3 { height: 540px; width: 190px; background: linear-gradient(270deg, #00ff88, #ff0088); top: -24px; right: 0; border-radius: 32px; opacity: 0.25; }
+    .screen__background__shape4 { height: 400px; width: 200px; background: #2c2c54; top: 420px; right: 50px; border-radius: 60px; opacity: 0.4; }
+    .login { width: 320px; padding: 30px; padding-top: 156px; }
+    .login__field { padding: 20px 0px; position: relative; }
+    .login__icon { position: absolute; top: 30px; color: #00ff88; }
+    .login__input { border: none; border-bottom: 2px solid #444; background: transparent; padding: 10px; padding-left: 24px; font-weight: 700; width: 75%; transition: .2s; color: #fff; }
+    .login__input:active, .login__input:focus, .login__input:hover { outline: none; border-bottom-color: #00ff88; }
+    .login__submit { background: #00ff88; font-size: 14px; margin-top: 30px; padding: 16px 20px; border-radius: 26px; border: none; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; width: 100%; color: #0d0d1a; box-shadow: 0px 0px 12px #00ff88; cursor: pointer; transition: .3s; }
+    .login__submit:hover { background: #00cc66; box-shadow: 0px 0px 20px #00ff88; }
+    .button__icon { font-size: 24px; margin-left: auto; color: #0d0d1a; }
+    .social-login { position: absolute; height: 140px; width: 160px; text-align: center; bottom: 0px; right: 0px; color: #fff; }
+    .social-icons { display: flex; align-items: center; justify-content: center; }
+    .social-login__icon { padding: 20px 10px; color: #fff; text-decoration: none; text-shadow: 0px 0px 8px #ff0088; transition: .3s; }
+    .social-login__icon:hover { transform: scale(1.5); color: #00ff88; text-shadow: 0px 0px 12px #00ff88; }
+    .login-footer {margin-top: 20px; text-align: center; color: #fff; font-size: 14px;}
+    .login-footer a {color: #00ff88; text-decoration: none; font-weight: bold;}
+    .login-footer a:hover {color: #ff0088; text-shadow: 0px 0px 6px #ff0088;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="screen">
+      <div class="screen__content">
 
-                    <form method="post" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control"
-                                   placeholder="Enter your email" required>
-                        </div>
+        <!-- Django Login Form -->
+        <form class="login" method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="login__field">
+            <i class="login__icon fas fa-user"></i>
+            <input type="email" name="email" class="login__input" placeholder="Email" required>
+          </div>
+          <div class="login__field">
+            <i class="login__icon fas fa-lock"></i>
+            <input type="password" name="password" class="login__input" placeholder="Password" required>
+          </div>
+          <button type="submit" class="button login__submit">
+            <span class="button__text">Log In Now</span>
+            <i class="button__icon fas fa-chevron-right"></i>
+          </button>	
+          <div class="login-footer">
+            <small>Do not have an account ?
+              <a href="{% url 'signup' %}">Signup</a>
+            </small>
+          </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" id="password" class="form-control"
-                                   placeholder="Enter your password" required>
-                        </div>
+        </form>
 
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    <small>Don't have an account?
-                        <a href="{% url 'signup' %}">Sign Up</a>
-                    </small>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="screen__background">
+        <span class="screen__background__shape screen__background__shape4"></span>
+        <span class="screen__background__shape screen__background__shape3"></span>		
+        <span class="screen__background__shape screen__background__shape2"></span>
+        <span class="screen__background__shape screen__background__shape1"></span>
+      </div>		
     </div>
-</div>
-
-{% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{% extends "theme.html" %}
+{% block main %}
+<div class="container my-5">
+    <h2>Your Cart</h2>
+
+    {% if products %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Product</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr>
+                    <td class="text-center">{{ item.product.name }}</td>
+                    <td class="text-center">{{ item.product.price }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <a href="{% url 'update_item_quantity' item.product.id 'decrease' %}" class="btn btn-sm btn-warning">−</a>
+                            <span class="mx-2">{{ item.quantity }}</span>
+                            <a href="{% url 'update_item_quantity' item.product.id 'increase' %}" class="btn btn-sm btn-success">+</a>
+                        </div>
+                    </td>
+                    <td class="text-center">{{ item.total_price }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'remove_cart_item' item.product.id %}" 
+                           class="btn btn-outline-danger btn-sm remove-item">
+                            <i class="fa fa-trash-o"></i> Remove
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Grand Total</strong></td>
+                    <td class="text-center"><strong>{{ total }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>No items in cart.</p>
+    {% endif %}
+</div>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- SweetAlert2 (modern confirmation popup) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteLinks = document.querySelectorAll(".remove-item");
+
+    deleteLinks.forEach(link => {
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        const url = this.getAttribute("href");
+
+        Swal.fire({
+          title: "Are you sure you want to Remove?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel",
+          reverseButtons: true,
+          background: "#6196dbff",  // dark background like your screenshot
+          color: "#fff",
+          confirmButtonColor: "#28a745", // green "Yes"
+          cancelButtonColor: "#6c757d",  // gray "Cancel"
+          customClass: {
+            popup: "shadow-lg rounded-4"
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = url;
+          }
+        });
+      });
+    });
+  });
+</script>
+{% endblock %}
