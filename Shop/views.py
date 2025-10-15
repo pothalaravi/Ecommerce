@@ -7,24 +7,32 @@ from django.contrib.auth.hashers import make_password, check_password
 
 def home(request):
     categories = Category.objects.all()
-    products = Product.objects.all()
+    
     categoryID = request.GET.get('category')
     search = request.GET.get('search')
     # sort = request.GET.grt('sort')
+
+    products = Product.objects.all()
+    
     if categoryID:
         products = Product.get_category_id(categoryID)
+    
     if search:
-        products = Product.objects.filter(name__icontains=search)
-    else:
-        products = Product.objects.all()
-        # print(products)
-    customer_id=request.session.get('customer_id')
-    cart_item_count=0
+        products = products.filter(name__icontains=search)
+
+    customer_id = request.session.get('customer_id')
+    cart_item_count = 0
     if customer_id:
-        cart_item_count=Cart.objects.filter(customer_id=customer_id).count()
-    data = {'products': products, 'categories': categories, 'cart_item_count':cart_item_count}
+        cart_item_count = Cart.objects.filter(customer_id=customer_id).count()
+
+    data = {
+        'products': products,
+        'categories': categories,
+        'cart_item_count': cart_item_count
+    }
     
     return render(request, 'index.html', data)
+
 
 
 # ===== Signup View =====
