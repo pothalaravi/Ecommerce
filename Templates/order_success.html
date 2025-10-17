@@ -1,0 +1,6 @@
+<h2>🎉 Order Confirmed Successfully!</h2>
+<p>Thank you for your purchase.</p>
+<p><strong>Order ID:</strong> {{ order.id }}</p>
+<p><strong>Total Amount:</strong> ₹{{ order.total_amount }}</p>
+<p><strong>Address:</strong> {{ order.address }}, {{ order.city }} - {{ order.pincode }}</p>
+<a href="{% url 'home' %}" class="btn btn-primary mt-3">Back to Home</a>

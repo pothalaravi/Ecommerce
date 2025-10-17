@@ -41,6 +41,11 @@
                 </tr>
             </tbody>
         </table>
+        <div class="text-end mt-4">
+          <a href="{% url 'checkout' %}" class="btn btn-primary btn-lg">
+            <i class="fa fa-credit-card me-2"></i> Buy Now
+          </a>
+        </div>
     {% else %}
         <p>No items in cart.</p>
     {% endif %}

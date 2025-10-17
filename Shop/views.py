@@ -1,17 +1,14 @@
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from .models import Cart, Product, Category, Customer
+from .models import Cart, Product, Category, Customer, Order
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.hashers import make_password, check_password
 
 def home(request):
     categories = Category.objects.all()
-    
     categoryID = request.GET.get('category')
     search = request.GET.get('search')
-    # sort = request.GET.grt('sort')
-
     products = Product.objects.all()
     
     if categoryID:
@@ -36,7 +33,7 @@ def home(request):
 
 
 # ===== Signup View =====
-def Registerpage(request):
+def registerpage(request):
     if request.method == 'GET':
         return render(request, 'signup.html')
 
@@ -84,7 +81,7 @@ def Registerpage(request):
 
 
 
-def Loginpage(request):
+def loginpage(request):
     if request.method=='GET':
         return render(request, 'login.html')
     else:
@@ -112,7 +109,7 @@ def Loginpage(request):
         
 
 
-def Logoutpage(request):
+def logoutpage(request):
     auth_logout(request)
     messages.success(request, " Logout Successfully ")
     return redirect("login")
@@ -198,8 +195,61 @@ def update_item_quantity(request, product_id, action):
     cart_item.save()
     return redirect ('cart')
 
-        
 
+def checkout(request):
+    customer_id = request.session.get('customer_id')
+    if not customer_id:
+        return redirect("login")
+    
+    customer = get_object_or_404(Customer, id=customer_id)
+    cart_items = Cart.objects.filter(customer=customer)
+    
+    for item in cart_items:
+        item.item_total = item.product.price * item.quantity
+
+    total = sum(item.item_total for item in cart_items)
+
+    return render (request, 'checkout.html', {'cart_items':cart_items, 'total':total, 'customer':customer})
+
+        
+def confirm_order(request):
+    if request.method == 'POST':
+        customer_id = request.session.get('customer_id')
+        if not customer_id:
+            return redirect("login")
+        
+        customer = get_object_or_404(Customer, id=customer_id)
+        cart_items = Cart.objects.filter(customer=customer)
+
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        pincode = request.POST.get('pincode')
+
+        for item in cart_items:
+            total_price = item.product.price * item.quantity
+            Order.objects.create(
+                customer=customer,
+                product=item.product,     
+                quantity=item.quantity,     
+                price=item.product.price,   
+                total_amount=total_price,   
+                address=address,
+                city=city,
+                pincode=pincode,
+            )
+        cart_items.delete()
+
+        return render(request, 'order_success.html')
+
+
+def my_orders(request):
+    customer_id = request.session.get('customer_id')
+    if not customer_id:
+        return redirect('login')
+    
+    customer = Customer.objects.get(id=customer_id)
+    orders  = Order.objects.filter(customer=customer).order_by('-date')
+    return render (request, "my_orders.html", {'orders': orders})
 
 
     

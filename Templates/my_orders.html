@@ -1,0 +1,39 @@
+{% extends "theme.html" %}
+{% block main %}
+
+<div class="container my-5">
+  <h2>My Orders</h2>
+
+  {% if orders %}
+  <table class="table table-striped mt-4">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Image</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Address</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.product.name }}</td>
+        <td>
+          <img src="{{ order.product.image.url }}" width="80" height="80" style="object-fit: cover;" />
+        </td>
+        <td>{{ order.quantity }}</td>
+        <td>₹{{ order.price }}</td>
+        <td>{{ order.address }}, {{ order.city }} - {{ order.pincode }}</td>
+        <td>{{ order.date|date:"d M Y, h:i A" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No orders found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
