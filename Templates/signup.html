@@ -1,114 +1,93 @@
-{% extends "theme.html" %}
-{% block main %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up Now</title>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css'>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css'>
 
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg rounded-3">
-        <div class="card-header text-center bg-primary text-white">
-          <h3 class="mb-0">Create Your Account</h3>
-        </div>
-        <div class="card-body p-4">
-          <!-- Error Message -->
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Raleway, sans-serif; }
+    body { background: linear-gradient(90deg, #0d0d1a, #1a1a2e); }
+    .container { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .screen { background: linear-gradient(90deg, #1a1a2e, #2c2c54); position: relative; height: 700px; width: 400px; box-shadow: 0px 0px 24px #00ff88; border-radius: 15px; }
+    .screen__content { z-index: 1; position: relative; height: 100%; padding-top: 50px; }
+    .screen__background { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; clip-path: inset(0 0 0 0); }
+    .screen__background__shape { transform: rotate(45deg); position: absolute; filter: blur(2px); }
+    .screen__background__shape1 { height: 520px; width: 520px; background: #00ff88; top: -50px; right: 120px; border-radius: 0 72px 0 0; opacity: 0.2; }
+    .screen__background__shape2 { height: 220px; width: 220px; background: #ff0088; top: -172px; right: 0; border-radius: 32px; opacity: 0.3; }
+    .screen__background__shape3 { height: 540px; width: 190px; background: linear-gradient(270deg, #00ff88, #ff0088); top: -24px; right: 0; border-radius: 32px; opacity: 0.25; }
+    .screen__background__shape4 { height: 400px; width: 200px; background: #2c2c54; top: 420px; right: 50px; border-radius: 60px; opacity: 0.4; }
+    .signup { width: 340px; padding: 30px; }
+    .signup__field { padding: 15px 0; position: relative; }
+    .signup__icon { position: absolute; top: 25px; color: #00ff88; }
+    .signup__input { border: none; border-bottom: 2px solid #444; background: transparent; padding: 10px; padding-left: 28px; font-weight: 700; width: 80%; transition: .2s; color: #fff; }
+    .signup__input:focus, .signup__input:hover { outline: none; border-bottom-color: #00ff88; }
+    .signup__submit { background: #00ff88; font-size: 14px; margin-top: 30px; padding: 16px 20px; border-radius: 26px; border: none; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; width: 100%; color: #0d0d1a; box-shadow: 0px 0px 12px #00ff88; cursor: pointer; transition: .3s; }
+    .signup__submit:hover { background: #00cc66; box-shadow: 0px 0px 20px #00ff88; }
+    .button__icon { font-size: 24px; margin-left: auto; color: #0d0d1a; }
+    .signup-footer {margin-top: 20px; text-align: center; color: #fff; font-size: 14px;}
+    .signup-footer a {color: #00ff88; text-decoration: none; font-weight: bold;}
+    .signup-footer a:hover {color: #ff0088; text-shadow: 0px 0px 6px #ff0088;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="screen">
+      <div class="screen__content">
+
+        <!-- Signup Form -->
+        <form class="signup" method="POST" action="{% url 'signup' %}">
+          {% csrf_token %}
+
           {% if error %}
-            <div class="alert alert-warning alert-dismissible fade show">
-              <strong>{{ error }}</strong>
-              <button type="button" class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"></button>
-            </div>
+            <div style="color:#ff0088; font-weight:bold; margin-bottom:10px; text-align:center;">{{ error }}</div>
           {% endif %}
-
-          <!-- Success Message -->
           {% if success %}
-            <div class="alert alert-warning alert-dismissible fade show">
-              <strong>{{ success }}</strong>
-              <button type="button" class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"></button>
-            </div>
+            <div style="color:#00ff88; font-weight:bold; margin-bottom:10px; text-align:center;">{{ success }}</div>
           {% endif %}
 
-          <!-- Signup Form -->
-          <form method="POST" action="{% url 'signup' %}">
-            {% csrf_token %}
+          <div class="signup__field">
+            <i class="signup__icon fas fa-user"></i>
+            <input type="text" name="full_name" class="signup__input" placeholder="Full Name" value="{{ values.full_name }}" required>
+          </div>
+          <div class="signup__field">
+            <i class="signup__icon fas fa-envelope"></i>
+            <input type="email" name="email" class="signup__input" placeholder="Email" value="{{ values.email }}" required>
+          </div>
+          <div class="signup__field">
+            <i class="signup__icon fas fa-phone"></i>
+            <input type="tel" name="mobile" class="signup__input" placeholder="Mobile Number" pattern="[0-9]{10}" maxlength="10" value="{{ values.mobile }}" required>
+          </div>
+          <div class="signup__field">
+            <i class="signup__icon fas fa-lock"></i>
+            <input type="password" name="password" class="signup__input" placeholder="Password" minlength="6" required>
+          </div>
 
-            <!-- Full Name -->
-            <div class="mb-3">
-              <label for="full_name" class="form-label">Full Name</label>
-              <input
-                type="text"
-                name="full_name"
-                id="full_name"
-                class="form-control"
-                value="{{values.full_name}}"
-                placeholder="Enter first name"
-                required
-              />
-            </div>
-            <!-- Email -->
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                class="form-control"
-                value="{{values.email}}"
-                placeholder="Enter email address"
-                required
-              />
-            </div>
+          <button type="submit" class="button signup__submit">
+            <span class="button__text">Sign Up Now</span>
+            <i class="button__icon fas fa-chevron-right"></i>
+          </button>
 
-            <!-- Mobile -->
-            <div class="mb-3">
-              <label for="mobile" class="form-label">Mobile Number</label>
-              <input
-                type="tel"
-                name="mobile"
-                id="mobile"
-                class="form-control"
-                value="{{values.mobile}}"
-                placeholder="Enter mobile number"
-                pattern="[0-9]{10}"
-                maxlength="10"
-                required
-              />
-              <div class="form-text">Enter 10-digit mobile number</div>
-            </div>
+          <div class="signup-footer">
+            <small>Already have an account? 
+              <a href="{% url 'login' %}">Login</a>
+            </small>
+          </div>
 
-            <!-- Password -->
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                class="form-control"
-                placeholder="Enter password"
-                minlength="6"
-                required
-              />
-            </div>
+        </form>
 
-            <!-- Submit Button -->
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">
-                Sign Up
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="card-footer text-center">
-          <small>
-            Already have an account?
-            <a href="{% url 'login' %}">Login</a>
-          </small>
-        </div>
       </div>
+      <div class="screen__background">
+        <span class="screen__background__shape screen__background__shape4"></span>
+        <span class="screen__background__shape screen__background__shape3"></span>		
+        <span class="screen__background__shape screen__background__shape2"></span>
+        <span class="screen__background__shape screen__background__shape1"></span>
+      </div>		
     </div>
   </div>
-</div>
+</body>
+</html>
 
-{% endblock %}
+

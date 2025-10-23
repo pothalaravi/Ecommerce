@@ -80,7 +80,7 @@ def registerpage(request):
             success_msg="Account Created Successfully"
             customerdata.save()
             msg={'success':success_msg}
-            return render(request, 'signup.html', msg)
+            return render(request, 'login.html', msg)
         else:
             msg ={'error':error_msg,  'values':uservalues}
             return render(request, 'signup.html', msg)
