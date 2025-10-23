@@ -37,14 +37,11 @@ class Customer(models.Model):
     def __str__(self):
         return self.full_name
 
-
-
-# Checking if email is existing or not
     def isexist(email):
         try:
             return Customer.objects.get(email=email)
-        except:
-            return False
+        except Customer.DoesNotExist:
+            return None
         
 
 

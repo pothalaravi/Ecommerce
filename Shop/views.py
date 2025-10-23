@@ -1,3 +1,4 @@
+from datetime import timezone
 from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,7 +6,13 @@ from .models import Cart, Product, Category, Customer, Order
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.hashers import make_password, check_password
 
+
+
 def home(request):
+    customer_id = request.session.get('customer_id')
+    if not customer_id:
+        return redirect('login')  # if not logged in, go to login page
+
     categories = Category.objects.all()
     categoryID = request.GET.get('category')
     search = request.GET.get('search')
@@ -17,7 +24,6 @@ def home(request):
     if search:
         products = products.filter(name__icontains=search)
 
-    customer_id = request.session.get('customer_id')
     cart_item_count = 0
     if customer_id:
         cart_item_count = Cart.objects.filter(customer_id=customer_id).count()
@@ -29,6 +35,8 @@ def home(request):
     }
     
     return render(request, 'index.html', data)
+
+    
 
 
 
@@ -225,21 +233,30 @@ def confirm_order(request):
         city = request.POST.get('city')
         pincode = request.POST.get('pincode')
 
+        total = 0
         for item in cart_items:
-            total_price = item.product.price * item.quantity
-            Order.objects.create(
-                customer=customer,
-                product=item.product,     
-                quantity=item.quantity,     
-                price=item.product.price,   
-                total_amount=total_price,   
-                address=address,
-                city=city,
-                pincode=pincode,
-            )
-        cart_items.delete()
+            total += item.product.price * item.quantity
 
-        return render(request, 'order_success.html')
+        order=Order.objects.create(
+            customer=customer,   
+            total_amount=total,   
+            address=address,
+            city=city,
+            pincode=pincode,
+        )
+        for item in cart_items :
+            order.product = item.product
+            order.quantity = item.quantity
+            order.price = item.product.price
+            order.save()
+
+        cart_items.delete()
+        data = {
+            'order': order,
+            'customer': customer
+        }
+
+        return render(request, 'order_success.html', data)
 
 
 def my_orders(request):
