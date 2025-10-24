@@ -2,37 +2,51 @@
 {% block main %}
 
 <div class="container my-5">
-  <h2>My Orders</h2>
+  <h2 class="mb-4 text-center fw-bold" style="letter-spacing: 1px;">My Orders</h2>
 
   {% if orders %}
-  <table class="table table-striped mt-4">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Image</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Address</th>
-        <th>Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for order in orders %}
-      <tr>
-        <td>{{ order.product.name }}</td>
-        <td>
-          <img src="{{ order.product.image.url }}" width="80" height="80" style="object-fit: cover;" />
-        </td>
-        <td>{{ order.quantity }}</td>
-        <td>₹{{ order.price }}</td>
-        <td>{{ order.address }}, {{ order.city }} - {{ order.pincode }}</td>
-        <td>{{ order.date|date:"d M Y, h:i A" }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table align-middle table-bordered shadow-sm">
+      <thead class="table-dark text-center">
+        <tr>
+          <th style="width: 25%;">Product</th>
+          <th style="width: 15%;">Image</th>
+          <th style="width: 10%;">Qty</th>
+          <th style="width: 15%;">Price</th>
+          <th style="width: 25%;">Shipping Address</th>
+          <th style="width: 10%;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <!-- ✅ Product Name Clickable -->
+          <td class="fw-semibold">
+            <a href="{% url 'product_detail' order.product.id %}" class="text-decoration-none text-dark">
+              {{ order.product.name }}
+            </a>
+          </td>
+
+          <!-- ✅ Product Image Clickable -->
+          <td class="text-center">
+            <a href="{% url 'product_detail' order.product.id %}">
+              <img src="{{ order.product.image.url }}" width="80" height="80" class="rounded border" style="object-fit: cover;">
+            </a>
+          </td>
+
+          <td class="text-center">{{ order.quantity }}</td>
+          <td class="text-success fw-bold">₹{{ order.price }}</td>
+          <td>{{ order.address }}, {{ order.city }} - {{ order.pincode }}</td>
+          <td class="text-nowrap">{{ order.date|date:"d M Y, h:i A" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
   {% else %}
-  <p>No orders found.</p>
+  <div class="alert alert-warning text-center mt-4">
+    No orders found.
+  </div>
   {% endif %}
 </div>
 

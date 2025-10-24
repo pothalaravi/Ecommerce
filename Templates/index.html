@@ -1,153 +1,151 @@
 {% extends "theme.html" %}
 {% block main %}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
 <style>
-  /* 🟢 Page Background */
   body {
-    background-color: #f8f9fa;
+    background: #f3f4f7;
   }
 
-  /* 🟢 Sidebar */
-  .list-group-item {
-    border: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-  }
-
-  .list-group-item:hover {
-    background-color: #198754;
-    color: white;
-  }
-
-  .list-group-item.active {
-    background-color: #198754 !important;
-    border-color: #198754 !important;
-  }
-
-  /* 🟢 Product Cards */
-  .card {
-    border: none;
+  /* Sidebar */
+  .category-sidebar {
+    background: #fff;
     border-radius: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    padding: 0;
+    overflow: hidden;
   }
 
-  .card:hover {
+  .category-sidebar a {
+    padding: 14px 18px;
+    font-weight: 500;
+    color: #444;
+    border-bottom: 1px solid #eee;
+    transition: 0.3s;
+  }
+
+  .category-sidebar a:last-child {
+    border-bottom: none;
+  }
+
+  .category-sidebar a.active,
+  .category-sidebar a:hover {
+    background: #198754;
+    color: #fff;
+  }
+
+  /* Filter Bar */
+  .filter-bar {
+    background: #fff;
+    padding: 14px 18px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+  }
+
+  /* Product Cards */
+  .product-card {
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    transition: 0.35s;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+  }
+
+  .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
 
-  .card-img-top {
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    height: 230px;
+  .product-card img {
+    height: 240px;
     object-fit: cover;
+    width: 100%;
   }
 
-  .card-title {
-    font-size: 1.1rem;
+  .product-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-top: 10px;
     color: #333;
   }
 
-  .card-text {
-    font-size: 0.95rem;
-    color: #666;
+  .product-price {
+    color: #198754;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
   }
 
-  /* 🟢 Add to Cart Button */
   .btn-success {
-    transition: all 0.3s ease;
     border-radius: 8px;
+    transition: 0.3s;
   }
 
   .btn-success:hover {
-    background-color: #157347;
     transform: scale(1.05);
+    background: #157347;
   }
 
-  /* 🟢 Top Search & Sort Bar */
-  .filter-bar {
-    background-color: white;
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    margin-bottom: 25px;
-  }
-
-  .filter-bar input {
-    border-radius: 8px;
-  }
-
-  .filter-bar select {
-    border-radius: 8px;
-  }
 </style>
 
 <div class="container my-4">
   <div class="row">
-    <!-- 🟢 Sidebar -->
+
+    <!-- Sidebar -->
     <div class="col-lg-3 mb-4">
-      <div class="list-group shadow-sm">
-        <a href="/" class="list-group-item list-group-item-action active">
+      <div class="category-sidebar">
+        <a href="{% url 'home' %}" class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
           All Products
         </a>
         {% for category in categories %}
-        <a href="{% url 'home' %}?category={{category.id}}" class="list-group-item list-group-item-action">
+        <a href="{% url 'home' %}?category={{category.id}}" class="list-group-item list-group-item-action {% if request.GET.category|default:'' == category.id|stringformat:'s' %}active{% endif %}">
           {{ category.name }}
         </a>
         {% endfor %}
       </div>
     </div>
 
-    <!-- 🟢 Main Product Section -->
+    <!-- Product Section -->
     <div class="col-lg-9">
-      <!-- Filter Bar -->
-      <div class="filter-bar d-flex flex-wrap justify-content-between align-items-center">
-        <!-- Search -->
-        <form method="GET" action="/" class="d-flex align-items-center w-100 w-md-auto mb-2 mb-md-0">
-          <input
-            type="text"
-            name="search"
-            class="form-control me-2"
-            placeholder="Search products..."
-            value="{{ request.GET.search|default:'' }}"
-          />
-          <button type="submit" class="btn btn-outline-success">
-            <i class="fa fa-search"></i>
-          </button>
+
+      <!-- Search -->
+      <div class="filter-bar d-flex align-items-center justify-content-between flex-wrap">
+        <form method="GET" action="/" class="d-flex w-100">
+          <input type="text" name="search" placeholder="Search products..." class="form-control me-2" value="{{ request.GET.search|default:'' }}">
+          <button class="btn btn-outline-success"><i class="fa fa-search"></i></button>
         </form>
       </div>
 
-      <!-- Product Grid -->
+      <!-- Product Cards -->
       <div class="row g-4">
         {% for i in products %}
         <div class="col-12 col-sm-6 col-md-4">
-          <div class="card h-100 shadow-sm">
+          <div class="product-card">
+
             <a href="{% url 'product_detail' i.id %}">
-              <img src="{{ i.image.url }}" class="card-img-top img-fluid" alt="{{ i.name }}">
+              <img src="{{ i.image.url }}" alt="{{ i.name }}">
             </a>
-            <div class="card-body text-center">
-              <h5 class="card-title mb-2">{{ i.name }}</h5>
-              <p class="card-text fw-semibold">₹{{ i.price }}</p>
-            </div>
-            <div class="card-footer bg-transparent border-0 pb-3 text-center">
-              <a href="{% url 'add_to_cart' i.id %}" class="btn btn-success px-4">
-                <i class="fa fa-cart-plus me-2"></i> Add to Cart
+
+            <div class="text-center p-3">
+              <div class="product-name">{{ i.name }}</div>
+              <div class="product-price">₹{{ i.price }}</div>
+
+              <a href="{% url 'add_to_cart' i.id %}" class="btn btn-success w-100">
+                <i class="fa fa-cart-plus me-2"></i>Add to Cart
               </a>
             </div>
+
           </div>
         </div>
         {% empty %}
         <p class="text-center text-muted mt-4">No products found.</p>
         {% endfor %}
       </div>
+
     </div>
   </div>
 </div>
-
-<!-- Font Awesome -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-/>
 
 {% endblock %}

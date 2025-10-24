@@ -26,7 +26,6 @@ class Product(models.Model):
         return self.name
 
 
-#Sign up
 
 class Customer(models.Model):
     full_name=models.CharField(max_length=50)
@@ -68,6 +67,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} - {self.customer.full_name}"
+    
+
+
+
 
 
 
